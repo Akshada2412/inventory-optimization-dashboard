@@ -1,0 +1,10 @@
+ABC,XYZ,Segment,Part_Count,Total_Value,Avg_Working_Capital,Strategy
+A,X,AX,309,11010402.0,3254.0,"Continuous review, low safety stock"
+A,Y,AY,64,823055.0,2334.0,"Periodic review, moderate safety stock"
+A,Z,AZ,470,5382290.0,3639.0,High safety stock / make-to-order
+B,X,BX,26,104205.0,771.0,"Standard EOQ, low safety stock"
+B,Y,BY,53,223040.0,985.0,"Periodic review, standard safety stock"
+B,Z,BZ,777,2900167.0,1601.0,"Safety stock buffer, monitor closely"
+C,X,CX,3,5780.0,517.0,"Bulk ordering, minimal safety stock"
+C,Y,CY,16,27179.0,533.0,"Infrequent review, small buffer"
+C,Z,CZ,956,1044228.0,649.0,On-demand / consignment stocking
