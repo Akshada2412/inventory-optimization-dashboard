@@ -7,10 +7,10 @@ import pandas as pd
 import numpy as np
 
 # ── DATA LOAD ─────────────────────────────────────────────────────────────────
-df       = pd.read_csv('/home/claude/parts_master.csv')
-demand   = pd.read_csv('/home/claude/demand_timeseries.csv', parse_dates=['Month'])
-matrix   = pd.read_csv('/home/claude/abcxyz_matrix.csv')
-kpi      = pd.read_csv('/home/claude/kpis.csv').iloc[0]
+df       = pd.read_csv('parts_master.csv')
+demand   = pd.read_csv('demand_timeseries.csv', parse_dates=['Month'])
+matrix   = pd.read_csv('abcxyz_matrix.csv')
+kpi      = pd.read_csv('kpis.csv').iloc[0]
 
 # ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
 NAVY     = '#0D1B2A'
