@@ -207,7 +207,7 @@ def make_forecast_pie(dff):
 def make_six_sigma_cpk(dff):
     fig = go.Figure()
     for cls, color in ABC_COLORS.items():
-        sub = dff[dff['ABC_Class'] == cls]['Cpk'].clip(-1, 2.5)
+        sub = dff[dff['ABC_Class'] == cls]['Cpk'].clip(-0.5, 2.0)
         fig.add_trace(go.Violin(
             y=sub, name=f'Class {cls}',
             fillcolor=color, opacity=0.7,
@@ -221,7 +221,7 @@ def make_six_sigma_cpk(dff):
                   annotation_font_color=AMBER,
                   annotation_position='right')
     fig.update_layout(**chart_layout('Process Capability (Cpk) by ABC Class'))
-    fig.update_yaxes(title='Cpk', range=[-1.2, 2.8])
+    fig.update_yaxes(title='Cpk', range=[-0.3, 2.0])
     fig.update_xaxes(title='ABC Class')
     return fig
 
@@ -256,19 +256,20 @@ def make_spc_chart(dff):
 
 def make_dmaic_table():
     dmaic_data = [
-        ('Define',   'Problem',        'Dead stock worth $348K tied in parts with zero demand for 12+ months'),
+        ('Define',   'Problem',        'Dead stock worth $349K tied in parts with zero demand for 12+ months'),
         ('Define',   'Goal',           'Reduce dead-stock working capital by 30% through demand-driven policy'),
         ('Define',   'Scope',          '2,674 automotive spare parts, 51 months demand history'),
-        ('Measure',  'Dead Stock',     '297 parts (11.1%) classified as Dead Stock — $348K trapped capital'),
-        ('Measure',  'ABC Split',      '843A / 856B / 975C; 82.3% of parts are Z-class (high variability)'),
-        ('Measure',  'Turnover',       'Average inventory turnover: 3.35× across the portfolio'),
+        ('Measure',  'Dead Stock',     '297 parts (11.1%) classified as Dead Stock — $349K trapped capital'),
+        ('Measure',  'ABC Split',      '843A / 856B / 975C; 82.4% of parts are Z-class (high variability)'),
+        ('Measure',  'Turnover',       'Average inventory turnover: 3.32× across the portfolio'),
+        ('Measure',  'Capability',     'Only 1.2% of parts are process-capable (Cpk ≥ 1.33) — intermittent demand defeats classic SPC'),
         ('Measure',  'Forecast Error', 'MASE ranges 0.6–1.8 across methods; SBA wins for erratic/lumpy demand'),
         ('Analyze',  'Root Cause 1',   'Static reorder points ignore demand intermittency — triggers overstocking'),
         ('Analyze',  'Root Cause 2',   'No demand-class segmentation; all parts managed identically'),
         ('Analyze',  'Root Cause 3',   'EOQ violated for 89% of C-class parts — ordering cost assumptions wrong'),
         ('Improve',  'Policy Change',  'Apply ABC-XYZ segmented inventory policies (9 strategies mapped)'),
         ('Improve',  'Forecasting',    'Replace single-method forecasting with Croston/SBA for intermittent demand'),
-        ('Improve',  'Newsvendor',     'Optimal order quantities identified — $653K annual savings potential'),
+        ('Improve',  'Newsvendor',     'Optimal order quantities identified — $654K annual savings potential'),
         ('Improve',  'Dead Stock',     'Flag parts with 12-month zero demand for review/liquidation'),
         ('Control',  'SPC',            'Control charts on A-class parts; trigger review when demand breaches UCL/LCL'),
         ('Control',  'KPIs',           'Monthly: turnover, dead-stock %, days-of-supply, MASE by class'),
@@ -510,7 +511,7 @@ content = html.Div([
         dbc.Row([
             dbc.Col(card([
                 section_header('Process Capability (Cpk) by ABC Class',
-                               'Cpk > 1.33 = capable process'),
+                               'Cpk ≥ 1.33 = capable; most intermittent parts fall short'),
                 dcc.Graph(id='violin-cpk', config={'displayModeBar': False},
                           style={'height': '320px'}),
             ]), width=6),
