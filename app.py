@@ -92,14 +92,18 @@ def make_working_capital_bar(dff):
 def make_abcxyz_heatmap(dff):
     abc_order = ['A', 'B', 'C']
     xyz_order = ['X', 'Y', 'Z']
-    m = matrix.copy()
-    pivot = m.pivot(index='ABC', columns='XYZ', values='Part_Count').reindex(
+    # Compute the 9-box counts LIVE from the filtered data so the matrix responds
+    # to the category filter like every other chart. Strategy text is a fixed
+    # lookup keyed by segment (the recommended policy doesn't change with filter).
+    counts = (dff.groupby(['ABC_Class', 'XYZ_Class']).size()
+              .reset_index(name='Part_Count'))
+    pivot = counts.pivot(index='ABC_Class', columns='XYZ_Class',
+                         values='Part_Count').reindex(
         index=abc_order, columns=xyz_order).fillna(0)
-    strategies_pivot = m.pivot(index='ABC', columns='XYZ', values='Strategy').reindex(
-        index=abc_order, columns=xyz_order).fillna('')
+    strat_lookup = dict(zip(matrix['Segment'], matrix['Strategy']))
 
     hover = [[f'<b>{abc_order[r]}{xyz_order[c]}</b><br>Parts: {int(pivot.iloc[r,c])}<br>'
-              f'Strategy: {strategies_pivot.iloc[r,c]}'
+              f'Strategy: {strat_lookup.get(abc_order[r]+xyz_order[c], "")}'
               for c in range(3)] for r in range(3)]
 
     fig = go.Figure(go.Heatmap(
@@ -147,10 +151,10 @@ def make_pareto(dff):
 
     layout = chart_layout('Pareto Analysis — Annual Inventory Value')
     layout['yaxis2'] = dict(
-        title='Cumulative %', overlaying='y', side='right',
+        title=dict(text='Cumulative %', font=dict(color=AMBER)),
+        overlaying='y', side='right',
         range=[0, 110], tickformat='.0f',
         showgrid=False, tickfont=dict(color=AMBER),
-        titlefont=dict(color=AMBER),
     )
     layout['legend'] = dict(x=0.02, y=0.98, font=dict(color=WHITE, size=11),
                             bgcolor='rgba(0,0,0,0)')
@@ -196,7 +200,7 @@ def make_forecast_pie(dff):
         hovertemplate='<b>%{label}</b><br>Parts: %{value}<br>Share: %{percent}<extra></extra>',
     ))
     fig.add_annotation(
-        text='<b>2,674</b><br><span style="font-size:10px">parts</span>',
+        text=f'<b>{len(dff):,}</b><br><span style="font-size:10px">parts</span>',
         x=0.5, y=0.5, showarrow=False,
         font=dict(size=14, color=WHITE),
     )
@@ -263,10 +267,10 @@ def make_dmaic_table():
         ('Measure',  'ABC Split',      '843A / 856B / 975C; 82.4% of parts are Z-class (high variability)'),
         ('Measure',  'Turnover',       'Average inventory turnover: 3.32× across the portfolio'),
         ('Measure',  'Capability',     'Only 1.2% of parts are process-capable (Cpk ≥ 1.33) — intermittent demand defeats classic SPC'),
-        ('Measure',  'Forecast Error', 'MASE ranges 0.6–1.8 across methods; SBA wins for erratic/lumpy demand'),
+        ('Measure',  'Forecast Error', 'MASE 0.30–1.29; SBA selected for 67% of erratic/lumpy parts, Naive for 76% of smooth'),
         ('Analyze',  'Root Cause 1',   'Static reorder points ignore demand intermittency — triggers overstocking'),
         ('Analyze',  'Root Cause 2',   'No demand-class segmentation; all parts managed identically'),
-        ('Analyze',  'Root Cause 3',   'EOQ violated for 89% of C-class parts — ordering cost assumptions wrong'),
+        ('Analyze',  'Root Cause 3',   'EOQ policy violated by 81% of parts (100% of C-class) — current order sizes deviate >50% from optimal'),
         ('Improve',  'Policy Change',  'Apply ABC-XYZ segmented inventory policies (9 strategies mapped)'),
         ('Improve',  'Forecasting',    'Replace single-method forecasting with Croston/SBA for intermittent demand'),
         ('Improve',  'Newsvendor',     'Optimal order quantities identified — $654K annual savings potential'),
