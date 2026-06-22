@@ -19,4 +19,4 @@ An end-to-end supply chain analytics dashboard analyzing 2,674 automotive spare 
 Python · Plotly Dash · Pandas · NumPy · SciPy · Deployed on Render
 
 ## Deploy
-Deployed at: [your-render-url]
+Deployed at: https://inventory-optimization-dashboard.onrender.com/
